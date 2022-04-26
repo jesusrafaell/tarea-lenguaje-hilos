@@ -63,11 +63,13 @@ public class Subasta extends Thread {
                     exit = true;
                     break;
                 }
-                for (int i = 0; i < listEspera.size(); i++) {   
-                    if (listEspera.get(i) != null && listEspera.get(i) != comprador) {
+                List<Comprador> auxListEspera = listEspera;
+                List<Integer> auxListMonto  = listEsperaMonto;
+                for (int i = 0; i < auxListEspera.size() && i < auxListMonto.size(); i++) {   
+                    if (auxListEspera.get(i) != null && auxListEspera.get(i) != comprador) {
                        //System.out.println("bug1");
-                       //printName(listEspera.get(i).GetName(), listEsperaMonto.get(i));
-                        if (montoActual < listEsperaMonto.get(i)) {
+                        //System.out.println(i + " " + auxListMonto.size() + " sss " + getName());
+                        if (montoActual < auxListMonto.get(i)) {
                             //System.out.println("bug2");
                             if (comprador != null) {
                                  //Devuelver el Dinero al comprador anterior
@@ -75,23 +77,19 @@ public class Subasta extends Thread {
                                 //System.out.println("Comprador " + comprador.getName() + " recupero Monto: " + montoActual);
                             }
                             comprador = listEspera.get(i);
-                            montoActual = listEsperaMonto.get(i);
+                            montoActual = auxListMonto.get(i);
                             comprador.initPuja(this);
                             //time.interrupt();
                             //System.out.println("Reinicar contador de " + getName());
                             time = new TimeSubasta("t " + product);
                             time.start();
                             
-                            printOferta(listEspera.get(i), listEsperaMonto.get(i));
-                            removeFromListEsperaMonto(i);
-                            removeFromListEspera(i);
-                            break;
+                            printOferta(auxListEspera.get(i), auxListMonto.get(i));
                         } else {
-                            listEspera.get(i).SetMonto(comprador.GetMonto() + listEsperaMonto.get(i));
-                            removeFromListEsperaMonto(i);
-                            removeFromListEspera(i);
-                            break;
+                            auxListEspera.get(i).SetMonto(comprador.GetMonto() + auxListMonto.get(i));
                         }
+                        removeFromListEsperaMonto(i);
+                        removeFromListEspera(i);
                     }
                 }
                 Thread.sleep(0);
