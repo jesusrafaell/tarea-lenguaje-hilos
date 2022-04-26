@@ -9,6 +9,7 @@ public class Comprador extends Thread {
  // state or field
   private String name;
   private int monto; 
+  private int montoInit; 
   private int percentMax;
   private boolean exit = false;
 
@@ -16,6 +17,7 @@ public class Comprador extends Thread {
     super(name);
     this.name = name;
     this.monto = monto;
+    this.montoInit = monto;
     this.percentMax = percent;
 
     //System.out.println("Creado el Comprador: " + name + " " +  monto  +" " + percent);
@@ -43,6 +45,9 @@ public class Comprador extends Thread {
     while(!exit){
       try {
         //printName();
+        if(monto > montoInit){
+            //System.out.println("Erro de monto en " + name + " monto: " + monto + "--- Error4");
+        }
         for (int i = 0; i < subastas.size(); i++) {
           int montoSubastar = montoOfert(subastas.get(i).getMontoActual());
            //System.out.println("Hilox Comprador: " + name + " tiene " + monto);
@@ -84,11 +89,11 @@ public class Comprador extends Thread {
     return montoOferta;
   }
   
-  public void SetMonto(int monto){
+  synchronized public void SetMonto(int monto){
     this.monto = monto;
   }
   
-  public int GetMonto(){
+  synchronized public int GetMonto(){
     return monto;
   }
         

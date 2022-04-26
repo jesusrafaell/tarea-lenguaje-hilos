@@ -31,28 +31,23 @@ public class Subasta extends Thread {
         //System.out.println("Creando hilo subasta " + '/' + vendedor.getName() + '/' + monto + '/' + product);
     }
 
-    List<Comprador> listEspera = new ArrayList<Comprador>();
+   // List<Comprador> listEspera = new ArrayList<Comprador>();
+    //List<Integer> listEsperaMonto = new ArrayList<>();
     
-    List<Integer> listEsperaMonto = new ArrayList<>();
+    List<Ofertante> listEspera = new ArrayList<Ofertante>();
     
-    public List<Comprador> getListEspera () {
+    public List<Ofertante> getListEspera () {
         return listEspera;
     }
     
-    public void addToListEspera (Comprador comprador) {
-        listEspera.add(comprador);
-    }
-     public void addToListEsperaMonto (int monto) {
-        listEsperaMonto.add(monto);
+    public void addToListEspera (Comprador comprador, int montoOferta) {
+        listEspera.add(new Ofertante(comprador, montoOferta));
     }
     
     public void removeFromListEspera (int index){
         listEspera.remove(index);
     }
     
-     public void removeFromListEsperaMonto (int index){
-        listEsperaMonto.remove(index);
-    }
     
     public void run() {
         boolean no = false;
@@ -65,34 +60,35 @@ public class Subasta extends Thread {
                     exit = true;
                     break;
                 }
-                List<Comprador> auxListEspera = listEspera;
-                List<Integer> auxListMonto  = listEsperaMonto;
-                for (int i = 0; i < auxListEspera.size() && i < auxListMonto.size(); i++) {  
-                    if (auxListEspera.get(i) != null && auxListEspera.get(i) != comprador && auxListMonto.get(i) != null) {
+                List<Ofertante> auxListEspera = listEspera;
+                //List<Integer> auxListMonto  = listEsperaMonto;
+                for (int i = 0; i < auxListEspera.size(); i++) {  
+                    if (auxListEspera.get(i).getComprador() != null && auxListEspera.get(i).getComprador() != comprador) {
                        //System.out.println("bug1");
                         //System.out.println(i + " " + auxListMonto.size() + " sss " + getName());
-                        if (montoActual < auxListMonto.get(i)) {
+                        if (montoActual < auxListEspera.get(i).getMonto()) {
                             //System.out.println("bug2");
                             if (comprador != null) {
                                  //Devuelver el Dinero al comprador anterior
+                                //System.out.println("Comprador " + comprador.getName() + " recupero Monto: " + montoActual + " en " + getName() + " tiene " + comprador.GetMonto());
                                 comprador.SetMonto(comprador.GetMonto() + montoActual);
-                                //System.out.println("Comprador " + comprador.getName() + " recupero Monto: " + montoActual);
+                                //System.out.println("Comprador " + comprador.getName() + " recupero Monto: " + montoActual + " en " + getName() + " ahora tiene " + comprador.GetMonto());
                             }
-                            comprador = listEspera.get(i);
-                            montoActual = auxListMonto.get(i);
+                            comprador = listEspera.get(i).getComprador();
+                            montoActual = listEspera.get(i).getMonto();
                             comprador.initPuja(this);
                             //time.interrupt();
                             //System.out.println("Reinicar contador de " + getName());
                             time = new TimeSubasta("t " + product);
                             time.start();
                             
-                            printOferta(auxListEspera.get(i), auxListMonto.get(i));
+                            printOferta(comprador, montoActual);
                         } else {
-                            auxListEspera.get(i).SetMonto(comprador.GetMonto() + auxListMonto.get(i));
+                            auxListEspera.get(i).getComprador().SetMonto(auxListEspera.get(i).getComprador().GetMonto() + listEspera.get(i).getMonto());
+                            //System.out.println("Comprador " + auxListEspera.get(i).getComprador().getName() + " recupero de la oferta: " + listEspera.get(i).getMonto() + " en " + getName() + " tiene " + auxListEspera.get(i).getComprador().GetMonto());
                         }
-                        removeFromListEsperaMonto(i);
-                        removeFromListEspera(i);
                     }
+                    removeFromListEspera(i);
                 }
                 Thread.sleep(0);
                 if (no) {
@@ -108,6 +104,15 @@ public class Subasta extends Thread {
     
     
   public void stopped() {
+    for (int i = 0; i < listEspera.size(); i++) {  
+        if (listEspera.get(i).getComprador() != null && listEspera.get(i).getComprador() != comprador) {
+            /*
+            System.out.println(listEspera.get(i).getComprador().getName() + " recupero " + listEspera.get(i).getMonto()
+                    + " porque actual " + getName() + " vale " + montoActual);
+            */
+            listEspera.get(i).getComprador().SetMonto(listEspera.get(i).getComprador().GetMonto() + listEspera.get(i).getMonto());
+        }
+    }
     exit = true;
   }
 
@@ -191,35 +196,9 @@ public class Subasta extends Thread {
 
     public void newOfertante(Comprador ofertante, int monto) {
         if (montoActual < monto) {
-            //int exMonto = ofertante.GetMonto();
-            /*
-              System.out.println(
-                "Comprador: " + ofertante.getName() + " tiene " + exMonto + " y pujo "
-                + monto + " por " + this.getName()
-                + " cuesta " + montoActual            
-              );
-            */
             ofertante.SetMonto(ofertante.GetMonto() - monto);
-            addToListEspera(ofertante);
-            addToListEsperaMonto(monto);
-            /*
-            if (this.comprador != null && this.comprador!=ofertante) {
-                System.out.println(
-                    "Comprador: " + ofertante.getName() + " tiene " + exMonto + " y pujo "
-                    + monto + " por " + this.getName()
-                    + " cuesta " + montoActual
-                    + " comprador actual " + this.comprador.getName()
-                        
-                );
-            } else if(this.comprador==null){
-                System.out.println(
-                    "Comprador: " + ofertante.getName() + " tiene " + exMonto + " y oferto "
-                    + monto + " por " + this.getName()
-                    + " cuesta " + montoActual
-                    + " no tiene comprador anterior"
-                ); 
-            }
-            */
+            addToListEspera(ofertante, monto);
+            //System.out.println("Comprador " + ofertante.getName() + " oferto: " + monto + " en " + getName() + " tiene " + ofertante.GetMonto());
         }
     }
 }
