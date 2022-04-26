@@ -15,6 +15,7 @@ public class Subasta extends Thread {
     private String product;
     private boolean exit = false;
     private boolean closeSubasta =false;
+    private boolean print =true;
     
     private TimeSubasta time;
 
@@ -171,6 +172,15 @@ public class Subasta extends Thread {
         //System.out.println(getName() + " aun no termina " +  closeSubasta  + " exit: " + exit);
         return closeSubasta;
     }
+    
+    public boolean canPrintV () {
+        return print;
+    }
+    
+     public void setPint () {
+        print = false;
+    }
+    
 
     public void newOfertante(Comprador ofertante, int monto) {
         if (montoActual < monto) {

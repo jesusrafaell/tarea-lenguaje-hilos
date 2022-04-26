@@ -27,13 +27,18 @@ public class Vendedor extends Thread {
         try {
             //printName();
             for (int i = 0; i < subastas.size(); i++) {
-              if(subastas.get(i).getCloseSubasta() && subastas.get(i).getComprador() != null && subastas.get(i).getVendedor() == this){
+              if(subastas.get(i).getCloseSubasta() && 
+                subastas.get(i).getComprador() != null &&
+                subastas.get(i).getVendedor() == this &&
+                subastas.get(i).canPrintV()
+            ){
+                  subastas.get(i).setPint();
                   System.out.println(
                     "El producto "+ subastas.get(i).GetProduct() +
                     " fue vendido a " + subastas.get(i).getCName() +
                     " por " + subastas.get(i).getMontoActual()
                   );
-                  subastas.remove(i);
+                  //subastas.remove(i);
                   break;
               }
             }
