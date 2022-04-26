@@ -1,18 +1,34 @@
 package models;
 
+import java.io.*;
+import java.util.concurrent.*;
 import java.util.Scanner;
 
 public class EndPrint extends Thread {
   private boolean printFin = false;
 
 
-    Scanner in = new Scanner(System.in);
+    Scanner in;
+    
+    public EndPrint (Scanner inMain){
+        this.in = inMain;
+    }
+    
+ 
     
     public void run() {
-        String line = in.nextLine();
-        while(!line.equals("Fin") && !line.equals("FIN")){
-            line = in.nextLine();
-        }
+        String line = " ";
+        try{
+            do {
+                while (!in.hasNextLine()){
+                    Thread.sleep(0);
+                }
+                line = in.nextLine();
+            }while(!line.equals("FIN") && !line.equals("Fin"));
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+        }   
+      
         printFin = true;
         //System.out.println("Fiiiiiin ==========================================================================");
     }

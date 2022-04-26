@@ -106,23 +106,20 @@ public class App {
       handleListV(db.listVendedor, db);
       handleListS(db.listSubasta);
       handleListC(db.listComprador, db);
-      EndPrint fin = new EndPrint();
+      EndPrint fin = new EndPrint(in);
       fin.start();
 
       //Espera al fin
       
-        while(!fin.getPrintFin() && notEndSubastas(db.listSubasta)){
+        while(notEndSubastas(db.listSubasta) && !fin.getPrintFin()){
             //Espero y analizo mientras
             //System.out.println("aqui " + !fin.getPrintFin());
             sleep(0);
         }
         
-        //System.out.println("Stoooooooooooooooooooooooooooooooooooooooop");
+        //System.out.println("Stoooooooooooooooooooooooooooooooooooooooop" + notEndSubastas(db.listSubasta) + "/" +!fin.getPrintFin());
         
-        if(fin.isAlive()){
-            fin.stopped();
-            fin.interrupt();
-        }
+        fin.interrupt();
 
         for (int i = 0; i < db.getListComprador().size(); i++) {
             db.getListComprador().get(i).stopped();
