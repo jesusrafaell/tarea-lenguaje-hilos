@@ -119,7 +119,7 @@ public class Comprador extends Thread {
   
   public boolean checkPuja (Subasta sub) {
     for (int i = 0; i < listPuja.size(); i++) {
-        System.out.println("Puja Comprador: " + name + " " + i + " / " + listPuja.size());
+        //System.out.println("Puja Comprador: " + name + " " + i + " / " + listPuja.size());
         if(listPuja.get(i).getSubasta() == sub){
             if(listPuja.get(i).endTime()){
                 //System.out.println("Puja Comprador: " + name + " no pude pujar en " + sub.getName() + " aun no es tiempo ");
