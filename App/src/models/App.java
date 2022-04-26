@@ -138,11 +138,19 @@ public class App {
         sleep(1000);
         for(int i = 0; i < db.listComprador.size(); i++){
             Comprador auxComprador = db.listComprador.get(i);
-            System.out.println(auxComprador.GetName() + " monto actual: " + auxComprador.GetMonto() + " y Adquirio:");
+            System.out.print(auxComprador.GetName() + " monto actual: " + auxComprador.GetMonto());
+            boolean flag = true;
             for(int j = 0; j < db.listSubasta.size(); j++){
                 if(db.listSubasta.get(j).getComprador() == db.listComprador.get(i)){
+                    if(flag){
+                        System.out.println(" y adquirio: ");
+                        flag=false;
+                    }
                     System.out.println(db.listSubasta.get(j).GetProduct() + " por " + db.listSubasta.get(j).getMontoActual());
                 }
+            }
+            if(flag){
+                System.out.println(" no adquirio ningun producto ");
             }
         }
         
