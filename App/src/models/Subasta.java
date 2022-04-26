@@ -51,7 +51,8 @@ public class Subasta extends Thread {
     
     public void run() {
         boolean no = false;
-        time.start();
+        //time.start();
+        //boolean init = true;
         while (!exit) {
             try{
                 if(time.endTime() && !closeSubasta){

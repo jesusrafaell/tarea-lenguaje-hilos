@@ -40,11 +40,13 @@ public class App {
     return null;
   }
   
-  public static boolean notEndSubastas (List<Subasta> subastas) {
-    for (int i = 0; i < subastas.size(); i++) {
-        //System.out.println("N" + !subastas.get(i).getCloseSubasta() + " " + subastas.get(i).getName());
-        if (!subastas.get(i).getCloseSubasta()) {
-          return true;
+  public static boolean notEndSubastas (List<Comprador> compradores, List<Subasta> subastas) {
+    for (int j = 0; j < compradores.size(); j++) { 
+        for (int i = 0; i < subastas.size(); i++) {
+            //System.out.println("N" + !subastas.get(i).getCloseSubasta() + " " + subastas.get(i).getName());
+            if (compradores.get(j).GetMonto() >= subastas.get(i).getMontoActual() && !subastas.get(i).getCloseSubasta()) {
+              return true;
+            }
         }
     }
     return false;
@@ -111,7 +113,7 @@ public class App {
 
       //Espera al fin
       
-        while(notEndSubastas(db.listSubasta) && !fin.getPrintFin()){
+        while(notEndSubastas(db.listComprador,db.listSubasta) && !fin.getPrintFin()){
             //Espero y analizo mientras
             //System.out.println("aqui " + !fin.getPrintFin());
             sleep(0);
