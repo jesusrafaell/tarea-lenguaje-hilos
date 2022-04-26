@@ -189,7 +189,7 @@ public class Subasta extends Thread {
         return print;
     }
     
-     public void setPint () {
+     public void setPrint () {
         print = false;
     }
     

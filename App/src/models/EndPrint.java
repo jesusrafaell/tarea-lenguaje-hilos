@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class EndPrint extends Thread {
   private boolean printFin = false;
-
+  private boolean exit = false;
 
     Scanner in;
     
@@ -22,6 +22,9 @@ public class EndPrint extends Thread {
             do {
                 while (!in.hasNextLine()){
                     Thread.sleep(0);
+                    if(exit){
+                     return;
+                    }
                 }
                 line = in.nextLine();
             }while(!line.equals("FIN") && !line.equals("Fin"));
@@ -30,11 +33,13 @@ public class EndPrint extends Thread {
         }   
       
         printFin = true;
+        in.close();
         //System.out.println("Fiiiiiin ==========================================================================");
     }
     
     public void stopped () {
-        in.close();
+        exit=true;
+        //in.close();
     }
     
     public boolean getPrintFin () {

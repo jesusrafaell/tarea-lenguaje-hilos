@@ -17,9 +17,32 @@ public class Vendedor extends Thread {
 
   public void stopped() {
     exit = true;
+    List<Subasta> subastas= db.getListSubasta();
+    printVendidos(subastas);
+    
   }
   
    Listas db;
+   
+    public void printVendidos (List<Subasta> subastas) {
+    for (int i = 0; i < subastas.size(); i++) {
+        if(subastas.get(i).getCloseSubasta() && 
+          subastas.get(i).getComprador() != null &&
+          subastas.get(i).getVendedor() == this &&
+          subastas.get(i).canPrintV()
+        ){
+            subastas.get(i).setPrint();
+            System.out.println(
+              "El producto "+ subastas.get(i).GetProduct() +
+              " fue vendido a " + subastas.get(i).getCName() +
+              " por " + subastas.get(i).getMontoActual()
+            );
+            //subastas.remove(i);
+            monto += (subastas.get(i).getMontoActual() / 10);
+            break;
+        }
+    }
+    }
 
   public void run() {   
     List<Subasta> subastas= db.getListSubasta();
@@ -27,23 +50,7 @@ public class Vendedor extends Thread {
     while(!exit){
         try {
             //printName();
-            for (int i = 0; i < subastas.size(); i++) {
-              if(subastas.get(i).getCloseSubasta() && 
-                subastas.get(i).getComprador() != null &&
-                subastas.get(i).getVendedor() == this &&
-                subastas.get(i).canPrintV()
-            ){
-                  subastas.get(i).setPint();
-                  System.out.println(
-                    "El producto "+ subastas.get(i).GetProduct() +
-                    " fue vendido a " + subastas.get(i).getCName() +
-                    " por " + subastas.get(i).getMontoActual()
-                  );
-                  //subastas.remove(i);
-                  monto += (subastas.get(i).getMontoActual() / 10);
-                  break;
-              }
-            }
+            printVendidos(subastas);
             Thread.sleep(0);
             if (no) {
               Thread.sleep(1000);

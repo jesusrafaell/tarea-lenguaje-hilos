@@ -119,7 +119,8 @@ public class App {
         
         //System.out.println("Stoooooooooooooooooooooooooooooooooooooooop" + notEndSubastas(db.listSubasta) + "/" +!fin.getPrintFin());
         
-        fin.interrupt();
+        fin.stopped();
+        //fin.interrupt();
 
         for (int i = 0; i < db.getListComprador().size(); i++) {
             db.getListComprador().get(i).stopped();
