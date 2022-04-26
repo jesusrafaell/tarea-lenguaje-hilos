@@ -9,8 +9,9 @@ import models.Listas;
 
 public class App {
 
-  public synchronized static void handleListV(List<Vendedor> listVendedor) {
+  public synchronized static void handleListV(List<Vendedor> listVendedor, Listas db) {
     for (int i = 0; i < listVendedor.size(); i++) {
+      listVendedor.get(i).setListSubastas(db);
       listVendedor.get(i).start();
     }
   }
@@ -70,14 +71,10 @@ public class App {
       }
 
       System.out.println("running");
-      handleListV(db.listVendedor);
+      handleListV(db.listVendedor, db);
       handleListS(db.listSubasta);
       handleListC(db.listComprador, db);
-      /*
-      handleListV();
-      handleListC();
-      handleListS();
-      */
+
       //Espera al fin
       while(!line.equals("Fin")){
         line = in.nextLine();

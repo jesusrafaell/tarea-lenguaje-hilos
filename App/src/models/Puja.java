@@ -12,14 +12,14 @@ public class Puja extends Thread {
     this.subasta = sub;
     this.time = timeInit;
 
-    System.out.println("Creado la puja: " + name + " por el timepo " + timeInit);
+    //System.out.println("Creado la puja: " + name + " por el tiempo " + timeInit/1000 + " seg");
   }
   
     public void run() {
         try {
             on = true;
             Thread.sleep(time);
-            System.out.println("Hilo Puja el Comprador: " + comprador.GetName() + " puede volver a pujar en " + subasta.getName());
+            //System.out.println("Hilo Puja el Comprador: " + comprador.GetName() + " puede volver a pujar en " + subasta.getName());
             on = false;
         } catch (InterruptedException e) {
             e.printStackTrace();

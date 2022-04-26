@@ -14,9 +14,10 @@ public class Subasta extends Thread {
     private int montoActual;
     private String product;
     private boolean exit = false;
+    private boolean closeSubasta =false;
+    
+    private TimeSubasta time;
 
-    private Comprador ofertante = null;
-    private int montoOfertante = 0;
 
     public Subasta(Vendedor vendedor, String product, int monto) {
         super(product);
@@ -24,8 +25,9 @@ public class Subasta extends Thread {
         this.monto = monto;
         this.montoActual = monto;
         this.product = product;
+        this.time = time = new TimeSubasta("t " + product);
 
-        System.out.println("Creando hilo subasta " + '/' + vendedor.getName() + '/' + monto + '/' + product);
+        //System.out.println("Creando hilo subasta " + '/' + vendedor.getName() + '/' + monto + '/' + product);
     }
 
     List<Comprador> listEspera = new ArrayList<Comprador>();
@@ -54,73 +56,69 @@ public class Subasta extends Thread {
     public void run() {
         boolean no = false;
         while (!exit) {
-            try {
-                //System.out.println("Hilo Subasta->" + getName() + this.ofertante + this.comprador );
+            try{
+                if(time.endTime() && !closeSubasta){
+                    //System.out.println("Fin subasta " + getName() + " la lista de espera: " + listEspera.size());
+                    closeSubasta = true;
+                    exit = true;
+                    break;
+                }
                 for (int i = 0; i < listEspera.size(); i++) {   
                     if (listEspera.get(i) != null && listEspera.get(i) != comprador) {
-                        System.out.println(
-                            getName() + " Monto Actual es: " + 
-                            montoActual + " Comprador: " + 
-                            listEspera.get(i).getName() +
-                            " Monto a ofertar " + listEsperaMonto.get(i)
-                         );
-                        //printName();
+                       //System.out.println("bug1");
+                       //printName(listEspera.get(i).GetName(), listEsperaMonto.get(i));
                         if (montoActual < listEsperaMonto.get(i)) {
+                            //System.out.println("bug2");
                             if (comprador != null) {
                                  //Devuelver el Dinero al comprador anterior
                                 comprador.SetMonto(comprador.GetMonto() + montoActual);
-                                System.out.println(
-                                    "Comprador " + comprador.getName() + " recupero Monto: " + montoActual + " //////////// "
-                                );
+                                //System.out.println("Comprador " + comprador.getName() + " recupero Monto: " + montoActual);
                             }
                             comprador = listEspera.get(i);
                             montoActual = listEsperaMonto.get(i);
                             comprador.initPuja(this);
-                            //crear el hilo de esperar para comprador
-                            removeFromListEspera(i);
+                            //time.interrupt();
+                            //System.out.println("Reinicar contador de " + getName());
+                            time = new TimeSubasta("t " + product);
+                            time.start();
+                            
+                            printOferta(listEspera.get(i), listEsperaMonto.get(i));
                             removeFromListEsperaMonto(i);
+                            removeFromListEspera(i);
+                            break;
                         } else {
                             listEspera.get(i).SetMonto(comprador.GetMonto() + listEsperaMonto.get(i));
-                            removeFromListEspera(i);
                             removeFromListEsperaMonto(i);
+                            removeFromListEspera(i);
+                            break;
                         }
                     }
                 }
-             
-                Thread.sleep(1000);
+                Thread.sleep(0);
                 if (no) {
-                    Thread.sleep(4000);
+                    Thread.sleep(1000);
                 }
+                
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+                
         }
     }
-
-    // behavior or method
-    /*public void printName() {
-    if(comprador != null){
-      System.out.println(
-        "Hilo Subasta->" + product + " == " + " Comprador: " + comprador.getName() +
-        " / Monto: " + montoActual + " / ofertante: " + ofertante.getName() +
-        " oferta: " + montoOfertante );
-      } else {
-        System.out.println("Hilo Subasta->" + product + " == " +
-        "/ no tiene comprador / Monto: " + monto + " / ofertante: "
-        + ofertante.getName()  + " oferta: " + montoOfertante );
+    
+    public void printOferta (Comprador comp, int oferta) {
+        System.out.println(comp.GetName() + " ofreció " + oferta + " por el producto " + product);
     }
-  }*/
-    public void printName2() {
-        if (comprador != null && compradorActual != ofertante) {
-            System.out.println(
-                    "HiloX Subasta->" + product + " == " + " Comprador: " + comprador.getName()
-                    + " / Monto: " + montoActual);
-        } else {
-            System.out.println("El comprador actual es " + compradorActual.GetName() + " con un precio de " + montoActual);
-            /*System.out.println("HiloX Subasta->" + product + " == " +
-        "/ no tiene comprador / Monto: " + monto);*/
 
-        }
+    public void printName(String nameEspera, int montoEspera) {
+        /*
+        System.out.println(
+            "Hilo Subasta: " + getName() + " Monto Actual es: " + 
+            montoActual + " / Ofertante: " + 
+            nameEspera +
+            " Monto a ofertar " + montoEspera
+         );
+        */
     }
 
     public int GetMonto() {
@@ -158,6 +156,10 @@ public class Subasta extends Thread {
     public Comprador getComprador() {
         return this.comprador;
     }
+    
+    public Vendedor getVendedor() {
+        return this.vendedor;
+    }
 
     public void setComprador(Comprador comprador) {
         this.comprador = comprador;
@@ -166,14 +168,26 @@ public class Subasta extends Thread {
     public String getCName() {
         return comprador.getName();
     }
+    
+    public boolean getCloseSubasta () {
+        //System.out.println(getName() + " aun no termina " +  closeSubasta  + " exit: " + exit);
+        return closeSubasta;
+    }
 
     public void newOfertante(Comprador ofertante, int monto) {
-        //System.out.println("Holaaa entre en el metodo newOfertante: ");
         if (montoActual < monto) {
-            int exMonto = ofertante.GetMonto();
+            //int exMonto = ofertante.GetMonto();
+            /*
+              System.out.println(
+                "Comprador: " + ofertante.getName() + " tiene " + exMonto + " y pujo "
+                + monto + " por " + this.getName()
+                + " cuesta " + montoActual            
+              );
+            */
             ofertante.SetMonto(ofertante.GetMonto() - monto);
             addToListEspera(ofertante);
             addToListEsperaMonto(monto);
+            /*
             if (this.comprador != null && this.comprador!=ofertante) {
                 System.out.println(
                     "Comprador: " + ofertante.getName() + " tiene " + exMonto + " y pujo "
@@ -190,6 +204,7 @@ public class Subasta extends Thread {
                     + " no tiene comprador anterior"
                 ); 
             }
+            */
         }
     }
 }
