@@ -51,13 +51,6 @@ public class Comprador extends Thread {
             this != subastas.get(i).getComprador() &&   //No es el actual comprador de la subasta
             checkPuja(subastas.get(i))                  //Puede pujar ya que paso el tiempo de espera
           ) {
-              /*
-            System.out.println(
-              "Hilo Comprador: " + name +
-              " tiene " + monto + " y va a oferto por " + montoSubastar +
-              " por " + subastas.get(i).getName()
-            );
-            */
              //Crear una oferta
             subastas.get(i).newOfertante(this, montoSubastar);
           }
@@ -90,7 +83,7 @@ public class Comprador extends Thread {
     int montoOferta = precio + puja;
     return montoOferta;
   }
- 
+  
   public void SetMonto(int monto){
     this.monto = monto;
   }

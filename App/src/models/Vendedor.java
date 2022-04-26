@@ -5,6 +5,7 @@ import java.util.*;
 public class Vendedor extends Thread {
  // state or field
   private String name;
+  private int monto=0;
   private boolean exit = false;
 
   public Vendedor (String name){
@@ -39,6 +40,7 @@ public class Vendedor extends Thread {
                     " por " + subastas.get(i).getMontoActual()
                   );
                   //subastas.remove(i);
+                  monto += (subastas.get(i).getMontoActual() / 10);
                   break;
               }
             }
@@ -61,5 +63,8 @@ public class Vendedor extends Thread {
     this.db = newDB;
   }
 
+   public int getMonto (){
+       return monto;
+   }
 
 }

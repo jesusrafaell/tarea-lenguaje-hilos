@@ -56,6 +56,7 @@ public class Subasta extends Thread {
     
     public void run() {
         boolean no = false;
+        time.start();
         while (!exit) {
             try{
                 if(time.endTime() && !closeSubasta){
@@ -66,8 +67,8 @@ public class Subasta extends Thread {
                 }
                 List<Comprador> auxListEspera = listEspera;
                 List<Integer> auxListMonto  = listEsperaMonto;
-                for (int i = 0; i < auxListEspera.size() && i < auxListMonto.size(); i++) {   
-                    if (auxListEspera.get(i) != null && auxListEspera.get(i) != comprador) {
+                for (int i = 0; i < auxListEspera.size() && i < auxListMonto.size(); i++) {  
+                    if (auxListEspera.get(i) != null && auxListEspera.get(i) != comprador && auxListMonto.get(i) != null) {
                        //System.out.println("bug1");
                         //System.out.println(i + " " + auxListMonto.size() + " sss " + getName());
                         if (montoActual < auxListMonto.get(i)) {
@@ -104,6 +105,12 @@ public class Subasta extends Thread {
                 
         }
     }
+    
+    
+  public void stopped() {
+    exit = true;
+  }
+
     
     public void printOferta (Comprador comp, int oferta) {
         System.out.println(comp.GetName() + " ofreció " + oferta + " por el producto " + product);

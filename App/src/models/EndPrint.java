@@ -1,37 +1,28 @@
 package models;
 
+import java.util.Scanner;
+
 public class EndPrint extends Thread {
-  private Comprador comprador;
-  private Subasta subasta;
-  private int time=0;
-  private boolean on = false;
+  private boolean printFin = false;
 
-  public EndPrint (String name, Comprador comp, Subasta sub, int timeInit){
-    super(name);
-    this.comprador = comp;
-    this.subasta = sub;
-    this.time = timeInit;
 
-    //System.out.println("Creado la puja: " + name + " por el tiempo " + timeInit/1000 + " seg");
-  }
-  
-    public void run() {
-        try {
-            on = true;
-            Thread.sleep(time);
-            //System.out.println("Hilo Puja el Comprador: " + comprador.GetName() + " puede volver a pujar en " + subasta.getName());
-            on = false;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }  
+    Scanner in = new Scanner(System.in);
     
-    public Subasta getSubasta () {
-        return subasta;
+    public void run() {
+        String line = in.nextLine();
+        while(!line.equals("Fin") && !line.equals("FIN")){
+            line = in.nextLine();
+        }
+        printFin = true;
+        //System.out.println("Fiiiiiin ==========================================================================");
     }
     
-    public boolean endTime () {
-        return on;
+    public void stopped () {
+        in.close();
+    }
+    
+    public boolean getPrintFin () {
+        return printFin;
     }
     
 }
